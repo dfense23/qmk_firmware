@@ -27,7 +27,21 @@ enum layers {
     _GAME,
     _ADJUST,
 };
+bool is_alt_tab_active = false; // ADD this near the begining of keymap.c
+bool is_alt_shift_tab_active = false; // ADD this near the begining of keymap.c
+uint16_t alt_tab_timer = 0;     // we will be using them soon.
 
+//ALT TAB Encoder Timer
+void matrix_scan_user(void) { // The very important timer.
+  if (is_alt_tab_active) {
+    if (timer_elapsed(alt_tab_timer) > 1000) {
+      unregister_code(KC_LALT);
+      unregister_code(KC_LSFT);
+      is_alt_tab_active = false;
+      is_alt_shift_tab_active = false;
+    }
+  }
+}; 
 
 // Aliases for readability
 #define COLEMAK  DF(_COLEMAK_DH)
@@ -95,11 +109,11 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 	[_COLEMAK_DH] = LAYOUT_split_3x6_5(
         KC_TAB, KC_Q, KC_W, KC_F, KC_P, KC_B,                                                                               KC_J, KC_L, KC_U, KC_Z, LSFT(KC_RBRC), KC_MINS, 
         KC_BSPC, LGUI_T(KC_A), LALT_T(KC_R), LSFT_T(KC_S), LCTL_T(KC_T),KC_G,                                               KC_M, RCTL_T(KC_N), RSFT_T(KC_E), RALT_T(KC_I), RGUI_T(KC_O), KC_ENT, 
-        KC_LSFT, KC_Y, KC_X, KC_C, KC_D, KC_V,              KC_ESC, KC_CAPS,                        KC_NO, KC_APP,          KC_K, KC_H, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, 
+        KC_LSFT, KC_Y, KC_X, KC_C, KC_D, KC_V,              KC_ESC, LGUI(KC_TAB),                        KC_NO, KC_APP,          KC_K, KC_H, KC_COMM, KC_DOT, KC_SLSH, KC_RSFT, 
                                 KC_NO, KC_DEL, TO(0), KC_SPC, TO(1),                                    TO(2), KC_ENT, TO(3), TO(4), TO(5)),
 	[_NUM] = LAYOUT_split_3x6_5(
         KC_F12, KC_F1, KC_F2, KC_F3, KC_F4, KC_F5,                                                                          KC_F6, KC_F7, KC_F8, KC_F9, KC_F10, KC_F11, 
-        KC_TRNS, LALT_T(KC_1), LALT_T(KC_2), LSFT_T(KC_3), LCTL_T(KC_4), KC_5,                                              KC_6, RCTL_T(KC_7), RSFT_T(KC_8), RALT_T(KC_9), RGUI_T(KC_0), KC_TRNS, 
+        KC_TRNS, LGUI_T(KC_1), LALT_T(KC_2), LSFT_T(KC_3), LCTL_T(KC_4), KC_5,                                              KC_6, RCTL_T(KC_7), RSFT_T(KC_8), RALT_T(KC_9), RGUI_T(KC_0), KC_TRNS, 
         KC_TRNS, KC_QUOT, KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS,       KC_TRNS, KC_TRNS,               KC_TRNS, KC_TRNS,       KC_TRNS, KC_TRNS, KC_LBRC, KC_TRNS, KC_SCLN, KC_TRNS, 
                                 KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS, TO(2),                              TO(0), KC_TRNS, KC_TRNS, KC_TRNS, KC_TRNS),
 	[_SYM] = LAYOUT_split_3x6_5(
@@ -152,7 +166,7 @@ bool oled_task_user(void) {
 
         oled_write_P(qmk_logo, false);
         oled_write_P(PSTR("Kyria "), false);
-        oled_write_P(PSTR("rev3\n\n"), false);
+        oled_write_P(PSTR("rev3.dfense\n\n"), false);
 #endif
         // Host Keyboard Layer Status
         oled_write_P(PSTR("Layer: "), false);
@@ -207,22 +221,49 @@ bool oled_task_user(void) {
 
 #ifdef ENCODER_ENABLE
 bool encoder_update_user(uint8_t index, bool clockwise) {
-
-    if (index == 0) {
-        // Volume control
-        if (clockwise) {
-            tap_code(KC_VOLU);
-        } else {
-            tap_code(KC_VOLD);
+    if (get_highest_layer(layer_state|default_layer_state) == 6) {
+        if (index == 0) {
+            if (clockwise) {
+                rgblight_increase_hue();
+            } else {
+                rgblight_decrease_hue();
+            }
+        } else if (index == 1) {
+            if (clockwise) {
+                rgblight_increase_val();
+            } else {
+                rgblight_decrease_val();
+            }
         }
-    } else if (index == 1) {
-        // Page up/Page down
-        if (clockwise) {
-            tap_code(KC_PGDN);
-        } else {
-            tap_code(KC_PGUP);
+    }
+
+    else {
+        if (index == 0) {
+            if (clockwise) {
+                tap_code(KC_PGDN);
+            } else {
+                tap_code(KC_PGUP);
+            }
+        } else if (index == 1) {
+            if (clockwise) {
+                if (!is_alt_tab_active) {
+                    is_alt_tab_active = true;
+                unregister_code(KC_LSFT);
+                register_code(KC_LALT);
+                }
+                alt_tab_timer = timer_read();
+                tap_code(KC_TAB);
+            } else {
+                if (!is_alt_shift_tab_active) {
+                    is_alt_shift_tab_active = true;
+                register_code(KC_LALT);
+                register_code(KC_LSFT);
+                }
+                alt_tab_timer = timer_read();
+                tap_code(KC_TAB);
+            }
         }
     }
     return false;
-}
+};
 #endif
