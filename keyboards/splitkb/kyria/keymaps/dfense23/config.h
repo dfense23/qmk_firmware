@@ -15,6 +15,8 @@
  */
 
 #pragma once
+#define TAPPING_TERM 300
+#define PERMISSIVE_HOLD_PER_KEY
 
 #ifdef RGBLIGHT_ENABLE
 #    define RGBLIGHT_EFFECT_BREATHING
