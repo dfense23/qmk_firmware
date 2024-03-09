@@ -6,6 +6,12 @@ DYNAMIC_TAPPING_TERM_INCREMENT = 50
 POINTING_DEVICE_ENABLE = yes
 POINTING_DEVICE_DRIVER = cirque_pinnacle_i2c
 
+SPLIT_KEYBOARD = yes
+
+ENCODER_ENABLE = yes       # Enables the use of one or more encoders
+RGB_MATRIX_ENABLE = no     # Disable keyboard RGB matrix, as it is enabled by default on rev3
+RGBLIGHT_ENABLE = yes      # Enable keyboard RGB underglow
+
 #CIRQUE_PINNACLE_DIAMETER_MM = 35
 #CIRQUE_PINNACLE_ATTENUATION = EXTREG__TRACK_ADCCONFIG__ADC_ATTENUATE_4X # EXTREG__TRACK_ADCCONFIG__ADC_ATTENUATE_4X least sensitive, EXTREG__TRACK_ADCCONFIG__ADC_ATTENUATE_1X most sensitive
 
@@ -25,6 +31,3 @@ POINTING_DEVICE_DRIVER = cirque_pinnacle_i2c
 #POINTING_DEVICE_GESTURES_CURSOR_GLIDE_ENABLE = yes
 
 
-ENCODER_ENABLE = yes       # Enables the use of one or more encoders
-RGB_MATRIX_ENABLE = no     # Disable keyboard RGB matrix, as it is enabled by default on rev3
-RGBLIGHT_ENABLE = yes      # Enable keyboard RGB underglow
