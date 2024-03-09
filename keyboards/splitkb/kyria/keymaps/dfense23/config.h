@@ -30,6 +30,9 @@
 #define POINTING_DEVICE_GESTURES_SCROLL_ENABLE
 #define POINTING_DEVICE_GESTURES_CURSOR_GLIDE_ENABLE
 
+#define POINTING_DEVICE_AUTO_MOUSE_ENABLE
+// only required if not setting mouse layer elsewhere
+// #define AUTO_MOUSE_DEFAULT_LAYER <index of your mouse layer>
 
 #ifdef RGBLIGHT_ENABLE
 #    define RGBLIGHT_EFFECT_BREATHING
