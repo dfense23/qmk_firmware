@@ -34,7 +34,7 @@
 
 #define POINTING_DEVICE_AUTO_MOUSE_ENABLE
 // only required if not setting mouse layer elsewhere
-// #define AUTO_MOUSE_DEFAULT_LAYER <index of your mouse layer>
+#define AUTO_MOUSE_DEFAULT_LAYER 7
 
 #ifdef RGBLIGHT_ENABLE
 #    define RGBLIGHT_EFFECT_BREATHING
